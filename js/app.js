@@ -245,11 +245,13 @@ function animate() {
       car.position.x -= Math.sin(car.rotation.y) * carSpeed;
       car.position.z -= Math.cos(car.rotation.y) * carSpeed;
     }
-    if (keys['a'] || keys['arrowleft']) {
-      car.rotation.y += carRotSpeed;
-    }
-    if (keys['d'] || keys['arrowright']) {
-      car.rotation.y -= carRotSpeed;
+    if (isMoving) {
+      if (keys['a'] || keys['arrowleft']) {
+        car.rotation.y += carRotSpeed;
+      }
+      if (keys['d'] || keys['arrowright']) {
+        car.rotation.y -= carRotSpeed;
+      }
     }
 
     // Clamp to ground bounds
