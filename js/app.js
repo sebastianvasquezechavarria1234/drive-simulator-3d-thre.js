@@ -15,8 +15,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a1a12);
-scene.fog = new THREE.FogExp2(0x0a1a12, 0.025);
+scene.background = new THREE.Color(0xE8E8F0);
+scene.fog = new THREE.FogExp2(0xE8E8F0, 0.015);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
@@ -40,15 +40,15 @@ controls.update();
 // ─── Lights ─────────────────────────────────────────────────────────
 
 // Ambient
-const ambient = new THREE.AmbientLight(0x404060, 0.6);
+const ambient = new THREE.AmbientLight(0x404060, 1.2);
 scene.add(ambient);
 
 // Hemisphere
-const hemi = new THREE.HemisphereLight(0x6688cc, 0x223344, 0.8);
+const hemi = new THREE.HemisphereLight(0x6688cc, 0x223344, 1.5);
 scene.add(hemi);
 
 // Directional (sun)
-const dirLight = new THREE.DirectionalLight(0xffeedd, 2.5);
+const dirLight = new THREE.DirectionalLight(0xffeedd, 3.5);
 dirLight.position.set(10, 15, 8);
 dirLight.castShadow = true;
 dirLight.shadow.mapSize.set(2048, 2048);
@@ -62,18 +62,32 @@ dirLight.shadow.bias = -0.0005;
 scene.add(dirLight);
 
 // Fill light
-const fillLight = new THREE.DirectionalLight(0x8899bb, 0.8);
+const fillLight = new THREE.DirectionalLight(0x8899bb, 1.5);
 fillLight.position.set(-8, 5, -6);
 scene.add(fillLight);
 
+// Back light
+const backLight = new THREE.DirectionalLight(0xffeedd, 2.0);
+backLight.position.set(-10, 10, -8);
+scene.add(backLight);
+
 // Point lights for atmosphere
-const pointRed = new THREE.PointLight(0xe94560, 1.5, 20);
-pointRed.position.set(-6, 3, 0);
+const pointRed = new THREE.PointLight(0xe94560, 2.5, 30);
+pointRed.position.set(-6, 4, 0);
 scene.add(pointRed);
 
-const pointBlue = new THREE.PointLight(0x0f3460, 1.5, 20);
-pointBlue.position.set(6, 3, 0);
+const pointBlue = new THREE.PointLight(0x0f3460, 2.5, 30);
+pointBlue.position.set(6, 4, 0);
 scene.add(pointBlue);
+
+// Extra point lights
+const pointGreen = new THREE.PointLight(0x00ff88, 1.5, 25);
+pointGreen.position.set(0, 5, -10);
+scene.add(pointGreen);
+
+const pointPurple = new THREE.PointLight(0x9400D3, 1.5, 25);
+pointPurple.position.set(0, 5, 10);
+scene.add(pointPurple);
 
 // ─── Ground ─────────────────────────────────────────────────────────
 
@@ -98,7 +112,7 @@ const groundMat = new THREE.ShaderMaterial({
     uBump: { value: bumpTexture },
     uFadeStart: { value: 25.0 },
     uFadeEnd: { value: 48.0 },
-    uEdgeColor: { value: new THREE.Color(0x0a1a12) },
+    uEdgeColor: { value: new THREE.Color(0xE8E8F0) },
   },
   vertexShader: `
     varying vec2 vUv;
