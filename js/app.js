@@ -90,7 +90,7 @@ bumpTexture.wrapS = THREE.RepeatWrapping;
 bumpTexture.wrapT = THREE.RepeatWrapping;
 bumpTexture.repeat.set(20, 20);
 
-// Ground plane with gradient fade edges (circular)
+// Main platform (where car is)
 const groundGeo = new THREE.CircleGeometry(50, 128);
 const groundMat = new THREE.ShaderMaterial({
   uniforms: {
@@ -255,7 +255,7 @@ treeLoader.load(
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
       treeClone.scale.setScalar(scale);
-      treeClone.position.set(x, -20, z);
+      treeClone.position.set(x, -0.5, z);
       treeClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
