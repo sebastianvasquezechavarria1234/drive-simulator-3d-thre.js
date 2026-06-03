@@ -288,36 +288,36 @@ loader.load(
   }
 );
 
-// ─── Load Galaxy (decorative) ──────────────────────────────────────
-const galaxyLoader = new GLTFLoader();
-galaxyLoader.load(
-  'model/Galaxy%20Abundant%2004.glb',
+// ─── Load Mushroom (decorative) ────────────────────────────────────
+const mushroomLoader = new GLTFLoader();
+mushroomLoader.load(
+  'model/Mushroom_texture.glb',
   (gltf) => {
-    const galaxyModel = gltf.scene;
-    const galaxyPositions = [
+    const mushroomModel = gltf.scene;
+    const mushroomPositions = [
       [-18, -15], [20, -12], [-14, 18], [22, 16],
       [-25, 0], [28, -5], [0, -25], [5, 28],
       [-20, 20], [25, -20], [-30, -10], [15, 30],
     ];
-    galaxyPositions.forEach(([x, z]) => {
-      const galaxyClone = galaxyModel.clone();
-      const box = new THREE.Box3().setFromObject(galaxyClone);
+    mushroomPositions.forEach(([x, z]) => {
+      const mushroomClone = mushroomModel.clone();
+      const box = new THREE.Box3().setFromObject(mushroomClone);
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
-      galaxyClone.scale.setScalar(scale);
-      galaxyClone.position.set(x, -1, z);
-      galaxyClone.traverse((child) => {
+      mushroomClone.scale.setScalar(scale);
+      mushroomClone.position.set(x, -1, z);
+      mushroomClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
         }
       });
-      scene.add(galaxyClone);
+      scene.add(mushroomClone);
     });
   },
   undefined,
   (error) => {
-    console.error('Error loading galaxy:', error);
+    console.error('Error loading mushroom:', error);
   }
 );
 
