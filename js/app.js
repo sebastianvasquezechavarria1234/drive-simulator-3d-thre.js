@@ -238,40 +238,36 @@ loader.load(
   }
 );
 
-// ─── Load Tree (decorative) ────────────────────────────────────────
-const treeLoader = new GLTFLoader();
-treeLoader.load(
-  'model/aetheris_feathertree_variant__alien_flora.glb',
+// ─── Load Galaxy (decorative) ──────────────────────────────────────
+const galaxyLoader = new GLTFLoader();
+galaxyLoader.load(
+  'model/Galaxy%20Abundant%2004.glb',
   (gltf) => {
-    const treeModel = gltf.scene;
-    const treePositions = [
+    const galaxyModel = gltf.scene;
+    const galaxyPositions = [
       [-18, -15], [20, -12], [-14, 18], [22, 16],
       [-25, 0], [28, -5], [0, -25], [5, 28],
       [-20, 20], [25, -20], [-30, -10], [15, 30],
     ];
-    treePositions.forEach(([x, z]) => {
-      const treeClone = treeModel.clone();
-      const box = new THREE.Box3().setFromObject(treeClone);
+    galaxyPositions.forEach(([x, z]) => {
+      const galaxyClone = galaxyModel.clone();
+      const box = new THREE.Box3().setFromObject(galaxyClone);
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
-      treeClone.scale.setScalar(scale);
-      treeClone.position.set(x, -1, z);
-      treeClone.traverse((child) => {
+      galaxyClone.scale.setScalar(scale);
+      galaxyClone.position.set(x, -1, z);
+      galaxyClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
-          child.material = child.material.clone();
-          if (child.name === 'Object_4') {
-            child.material.color = new THREE.Color(0x228B22);
-            child.material.roughness = 0.8;
-          } else if (child.name === 'Object_5') {
-            child.material.color = new THREE.Color(0x4A2F1A);
-            child.material.roughness = 0.9;
-          }
         }
       });
-      scene.add(treeClone);
+      scene.add(galaxyClone);
     });
+  },
+  undefined,
+  (error) => {
+    console.error('Error loading galaxy:', error);
   }
 );
 
