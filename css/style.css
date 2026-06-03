@@ -24,10 +24,36 @@ body {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  color: #fff;
+  color: #333;
   text-align: center;
   pointer-events: none;
   z-index: 10;
+  animation: fadeInBlur 0.8s ease-out 1s both;
+}
+
+#info h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#info .instructions {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #555;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+#scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: fadeInBlur 1s ease-out 0.2s both;
 }
 
 #info h1 {
@@ -95,7 +121,7 @@ body {
   display: flex;
   gap: 15px;
   z-index: 10;
-  animation: fadeInBlur 1s ease-out 0.5s both;
+  animation: fadeInBlur 0.5s ease-out 0.3s both;
 }
 
 .creator-link,
@@ -124,7 +150,7 @@ body {
   align-items: center;
   gap: 5px;
   z-index: 10;
-  animation: fadeInBlur 1s ease-out 0.8s both;
+  animation: fadeInBlur 0.5s ease-out 0.5s both;
 }
 
 .control-row {
