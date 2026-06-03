@@ -73,3 +73,29 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ─── Buttons ─────────────────────────────────────────────────────── */
+.buttons-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.creator-link,
+.github-link {
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  text-decoration: underline;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.creator-link:hover,
+.github-link:hover {
+  opacity: 1;
+}
