@@ -90,14 +90,45 @@ bumpTexture.wrapS = THREE.RepeatWrapping;
 bumpTexture.wrapT = THREE.RepeatWrapping;
 bumpTexture.repeat.set(20, 20);
 
-// Ground plane with shadow
+// Ground plane with gradient fade edges
 const groundGeo = new THREE.PlaneGeometry(100, 100, 128, 128);
-const groundMat = new THREE.MeshStandardMaterial({
-  map: groundTexture,
-  bumpMap: bumpTexture,
-  bumpScale: 0.3,
-  roughness: 0.7,
-  metalness: 0.1,
+const groundMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uTexture: { value: groundTexture },
+    uBump: { value: bumpTexture },
+    uFadeStart: { value: 30.0 },
+    uFadeEnd: { value: 50.0 },
+    uEdgeColor: { value: new THREE.Color(0x0a1f0a) },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    varying vec3 vWorldPos;
+    void main() {
+      vUv = uv;
+      vec4 worldPos = modelMatrix * vec4(position, 1.0);
+      vWorldPos = worldPos.xyz;
+      gl_Position = projectionMatrix * viewMatrix * worldPos;
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D uTexture;
+    uniform sampler2D uBump;
+    uniform float uFadeStart;
+    uniform float uFadeEnd;
+    uniform vec3 uEdgeColor;
+    varying vec2 vUv;
+    varying vec3 vWorldPos;
+    void main() {
+      vec4 texColor = texture2D(uTexture, vUv);
+
+      float dist = max(abs(vWorldPos.x), abs(vWorldPos.z));
+      float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, dist);
+
+      vec3 finalColor = mix(uEdgeColor, texColor.rgb, fade);
+      gl_FragColor = vec4(finalColor, 1.0);
+    }
+  `,
+  side: THREE.DoubleSide,
 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
