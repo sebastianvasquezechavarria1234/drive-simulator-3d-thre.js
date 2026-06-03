@@ -91,93 +91,12 @@ scene.add(pointPurple);
 
 // ─── Ground ─────────────────────────────────────────────────────────
 
-// Ground texture
-const textureLoader = new THREE.TextureLoader();
-const groundTexture = textureLoader.load('texture/grav-2.jpg');
-groundTexture.wrapS = THREE.RepeatWrapping;
-groundTexture.wrapT = THREE.RepeatWrapping;
-groundTexture.repeat.set(20, 20);
-
-// Bump map (same image for depth effect)
-const bumpTexture = textureLoader.load('texture/grav-2.jpg');
-bumpTexture.wrapS = THREE.RepeatWrapping;
-bumpTexture.wrapT = THREE.RepeatWrapping;
-bumpTexture.repeat.set(20, 20);
-
 // Main platform (where car is)
 const groundGeo = new THREE.CircleGeometry(50, 128);
-const groundMat = new THREE.ShaderMaterial({
-  uniforms: {
-    uTexture: { value: groundTexture },
-    uBump: { value: bumpTexture },
-    uFadeStart: { value: 25.0 },
-    uFadeEnd: { value: 48.0 },
-    uEdgeColor: { value: new THREE.Color(0xE8E8F0) },
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    varying vec3 vWorldPos;
-    void main() {
-      vUv = uv;
-      vec4 worldPos = modelMatrix * vec4(position, 1.0);
-      vWorldPos = worldPos.xyz;
-      gl_Position = projectionMatrix * viewMatrix * worldPos;
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D uTexture;
-    uniform float uFadeStart;
-    uniform float uFadeEnd;
-    uniform vec3 uEdgeColor;
-    varying vec2 vUv;
-    varying vec3 vWorldPos;
-    
-    float hash(vec2 p) {
-      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-    }
-    
-    float noise(vec2 p) {
-      vec2 i = floor(p);
-      vec2 f = fract(p);
-      f = f * f * (3.0 - 2.0 * f);
-      float a = hash(i);
-      float b = hash(i + vec2(1.0, 0.0));
-      float c = hash(i + vec2(0.0, 1.0));
-      float d = hash(i + vec2(1.0, 1.0));
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-    
-    float fbm(vec2 p) {
-      float value = 0.0;
-      float amplitude = 0.5;
-      for (int i = 0; i < 5; i++) {
-        value += amplitude * noise(p);
-        p *= 2.0;
-        amplitude *= 0.5;
-      }
-      return value;
-    }
-    
-    void main() {
-      vec4 texColor = texture2D(uTexture, vUv * 15.0);
-      
-      float dist = length(vWorldPos.xz);
-      float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, dist);
-      
-      vec2 cloudUv = vWorldPos.xz * 0.05;
-      float cloudPattern = fbm(cloudUv + 0.5);
-      float cloudEdge = smoothstep(0.3, 0.7, cloudPattern);
-      
-      float cloudFade = smoothstep(uFadeStart, uFadeEnd - 5.0, dist);
-      float cloudAlpha = cloudFade * cloudEdge;
-      
-      vec3 cloudColor = mix(texColor.rgb, uEdgeColor, cloudAlpha);
-      
-      vec3 finalColor = mix(uEdgeColor, cloudColor, fade);
-      gl_FragColor = vec4(finalColor, 1.0);
-    }
-  `,
-  side: THREE.DoubleSide,
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0xE8E8F0,
+  roughness: 0.8,
+  metalness: 0.1,
 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
@@ -294,16 +213,19 @@ mushroomLoader.load(
   'model/Mushroom_texture.glb',
   (gltf) => {
     const mushroomModel = gltf.scene;
-    const mushroomPositions = [
-      [-18, -15], [20, -12], [-14, 18], [22, 16],
-      [-25, 0], [28, -5],
+    const mushroomData = [
+      { pos: [-18, -15], scale: 4 },
+      { pos: [20, -12], scale: 5 },
+      { pos: [-14, 18], scale: 3 },
+      { pos: [22, 16], scale: 6 },
+      { pos: [-25, 0], scale: 4.5 },
     ];
-    mushroomPositions.forEach(([x, z]) => {
+    mushroomData.forEach(({ pos: [x, z], scale }) => {
       const mushroomClone = mushroomModel.clone();
       const box = new THREE.Box3().setFromObject(mushroomClone);
       const size = box.getSize(new THREE.Vector3());
-      const scale = 6 / Math.max(size.x, size.y, size.z);
-      mushroomClone.scale.setScalar(scale);
+      const s = scale / Math.max(size.x, size.y, size.z);
+      mushroomClone.scale.setScalar(s);
       mushroomClone.position.set(x, -1, z);
       mushroomClone.traverse((child) => {
         if (child.isMesh) {
