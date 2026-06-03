@@ -151,6 +151,15 @@ const pillarPositions = [
 ];
 pillarPositions.forEach(([x, z]) => addPillar(x, z));
 
+// ─── Car controls (WASD) ────────────────────────────────────────────
+let car = null;
+const carSpeed = 0.15;
+const carRotSpeed = 0.04;
+const keys = {};
+
+window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+
 // ─── Load Model ─────────────────────────────────────────────────────
 const loader = new GLTFLoader();
 const loadingEl = document.getElementById('loading');
@@ -179,6 +188,7 @@ loader.load(
     });
 
     scene.add(model);
+    car = model;
 
     // Center controls on model
     controls.target.set(0, size.y * scale * 0.4, 0);
@@ -222,6 +232,35 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
+
+  // ── WASD movement ──
+  if (car) {
+    if (keys['w'] || keys['arrowup']) {
+      car.position.x -= Math.sin(car.rotation.y) * carSpeed;
+      car.position.z -= Math.cos(car.rotation.y) * carSpeed;
+    }
+    if (keys['s'] || keys['arrowdown']) {
+      car.position.x += Math.sin(car.rotation.y) * carSpeed;
+      car.position.z += Math.cos(car.rotation.y) * carSpeed;
+    }
+    if (keys['a'] || keys['arrowleft']) {
+      car.rotation.y += carRotSpeed;
+    }
+    if (keys['d'] || keys['arrowright']) {
+      car.rotation.y -= carRotSpeed;
+    }
+
+    // Clamp to ground bounds
+    const limit = 28;
+    car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
+    car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
+
+    // Camera follows car
+    const offset = new THREE.Vector3(0, 5, 10);
+    offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y);
+    camera.position.lerp(car.position.clone().add(offset), 0.05);
+    controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.05);
+  }
 
   controls.update();
 
