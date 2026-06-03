@@ -235,13 +235,15 @@ function animate() {
 
   // ── WASD movement ──
   if (car) {
+    const isMoving = keys['w'] || keys['s'] || keys['arrowup'] || keys['arrowdown'];
+
     if (keys['w'] || keys['arrowup']) {
-      car.position.x -= Math.sin(car.rotation.y) * carSpeed;
-      car.position.z -= Math.cos(car.rotation.y) * carSpeed;
-    }
-    if (keys['s'] || keys['arrowdown']) {
       car.position.x += Math.sin(car.rotation.y) * carSpeed;
       car.position.z += Math.cos(car.rotation.y) * carSpeed;
+    }
+    if (keys['s'] || keys['arrowdown']) {
+      car.position.x -= Math.sin(car.rotation.y) * carSpeed;
+      car.position.z -= Math.cos(car.rotation.y) * carSpeed;
     }
     if (keys['a'] || keys['arrowleft']) {
       car.rotation.y += carRotSpeed;
@@ -255,11 +257,13 @@ function animate() {
     car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
     car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
 
-    // Camera follows car
-    const offset = new THREE.Vector3(0, 5, 10);
-    offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y);
-    camera.position.lerp(car.position.clone().add(offset), 0.05);
-    controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.05);
+    // Camera follows car only when moving
+    if (isMoving) {
+      const offset = new THREE.Vector3(0, 5, 10);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y);
+      camera.position.lerp(car.position.clone().add(offset), 0.08);
+      controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
+    }
   }
 
   controls.update();
