@@ -93,13 +93,13 @@ scene.add(pointPurple);
 
 // Ground texture
 const textureLoader = new THREE.TextureLoader();
-const groundTexture = textureLoader.load('texture/grav.jpg');
+const groundTexture = textureLoader.load('texture/grav-2.jpg');
 groundTexture.wrapS = THREE.RepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
 groundTexture.repeat.set(20, 20);
 
 // Bump map (same image for depth effect)
-const bumpTexture = textureLoader.load('texture/grav.jpg');
+const bumpTexture = textureLoader.load('texture/grav-2.jpg');
 bumpTexture.wrapS = THREE.RepeatWrapping;
 bumpTexture.wrapT = THREE.RepeatWrapping;
 bumpTexture.repeat.set(20, 20);
