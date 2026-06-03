@@ -230,7 +230,7 @@ mushroomLoader.load(
   (gltf) => {
     const mushroomModel = gltf.scene;
     const mushroomPositions = [
-      [-8, -6], [8, -5],
+      [-8, -6], [8, -5], [-2, 3],
     ];
     mushroomPositions.forEach(([x, z]) => {
       const mushroomClone = mushroomModel.clone();
