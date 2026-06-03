@@ -304,7 +304,7 @@ mushroomLoader.load(
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
       mushroomClone.scale.setScalar(scale);
-      mushroomClone.position.set(x, 0, z);
+      mushroomClone.position.set(x, -1, z);
       mushroomClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
