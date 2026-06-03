@@ -255,11 +255,19 @@ treeLoader.load(
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
       treeClone.scale.setScalar(scale);
-      treeClone.position.set(x, -0.5, z);
+      treeClone.position.set(x, -1, z);
       treeClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+          child.material = child.material.clone();
+          if (child.name === 'Object_4') {
+            child.material.color = new THREE.Color(0x228B22);
+            child.material.roughness = 0.8;
+          } else if (child.name === 'Object_5') {
+            child.material.color = new THREE.Color(0x4A2F1A);
+            child.material.roughness = 0.9;
+          }
         }
       });
       scene.add(treeClone);
