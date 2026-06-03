@@ -84,11 +84,19 @@ groundTexture.wrapS = THREE.RepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
 groundTexture.repeat.set(20, 20);
 
+// Bump map (same image for depth effect)
+const bumpTexture = textureLoader.load('texture/grav.jpg');
+bumpTexture.wrapS = THREE.RepeatWrapping;
+bumpTexture.wrapT = THREE.RepeatWrapping;
+bumpTexture.repeat.set(20, 20);
+
 // Ground plane with shadow
-const groundGeo = new THREE.PlaneGeometry(100, 100);
+const groundGeo = new THREE.PlaneGeometry(100, 100, 128, 128);
 const groundMat = new THREE.MeshStandardMaterial({
   map: groundTexture,
-  roughness: 0.85,
+  bumpMap: bumpTexture,
+  bumpScale: 0.3,
+  roughness: 0.7,
   metalness: 0.1,
 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
