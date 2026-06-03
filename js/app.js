@@ -51,7 +51,7 @@ scene.add(hemi);
 const dirLight = new THREE.DirectionalLight(0xffeedd, 3.5);
 dirLight.position.set(10, 15, 8);
 dirLight.castShadow = true;
-dirLight.shadow.mapSize.set(2048, 2048);
+dirLight.shadow.mapSize.set(1024, 1024);
 dirLight.shadow.camera.near = 1;
 dirLight.shadow.camera.far = 50;
 dirLight.shadow.camera.left = -20;
@@ -214,7 +214,7 @@ mushroomLoader.load(
   (gltf) => {
     const mushroomModel = gltf.scene;
     const mushroomPositions = [
-      [-8, -6], [8, -5], [-6, 8], [7, 7],
+      [-8, -6], [8, -5],
     ];
     mushroomPositions.forEach(([x, z]) => {
       const mushroomClone = mushroomModel.clone();
