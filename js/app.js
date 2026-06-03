@@ -16,7 +16,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a1a12);
-scene.fog = new THREE.FogExp2(0x0a1a12, 0.015);
+scene.fog = new THREE.FogExp2(0x0a1a12, 0.025);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
@@ -90,14 +90,14 @@ bumpTexture.wrapS = THREE.RepeatWrapping;
 bumpTexture.wrapT = THREE.RepeatWrapping;
 bumpTexture.repeat.set(20, 20);
 
-// Ground plane with gradient fade edges
-const groundGeo = new THREE.PlaneGeometry(100, 100, 128, 128);
+// Ground plane with gradient fade edges (circular)
+const groundGeo = new THREE.CircleGeometry(50, 128);
 const groundMat = new THREE.ShaderMaterial({
   uniforms: {
     uTexture: { value: groundTexture },
     uBump: { value: bumpTexture },
-    uFadeStart: { value: 15.0 },
-    uFadeEnd: { value: 50.0 },
+    uFadeStart: { value: 25.0 },
+    uFadeEnd: { value: 48.0 },
     uEdgeColor: { value: new THREE.Color(0x0a1a12) },
   },
   vertexShader: `
@@ -112,16 +112,15 @@ const groundMat = new THREE.ShaderMaterial({
   `,
   fragmentShader: `
     uniform sampler2D uTexture;
-    uniform sampler2D uBump;
     uniform float uFadeStart;
     uniform float uFadeEnd;
     uniform vec3 uEdgeColor;
     varying vec2 vUv;
     varying vec3 vWorldPos;
     void main() {
-      vec4 texColor = texture2D(uTexture, vUv);
+      vec4 texColor = texture2D(uTexture, vUv * 15.0);
 
-      float dist = max(abs(vWorldPos.x), abs(vWorldPos.z));
+      float dist = length(vWorldPos.xz);
       float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, dist);
 
       vec3 finalColor = mix(uEdgeColor, texColor.rgb, fade);
@@ -315,10 +314,14 @@ function animate() {
       }
     }
 
-    // Clamp to ground bounds
-    const limit = 45;
-    car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
-    car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
+    // Clamp to ground bounds (circular)
+    const maxRadius = 40;
+    const distXZ = Math.sqrt(car.position.x ** 2 + car.position.z ** 2);
+    if (distXZ > maxRadius) {
+      const angle = Math.atan2(car.position.z, car.position.x);
+      car.position.x = Math.cos(angle) * maxRadius;
+      car.position.z = Math.sin(angle) * maxRadius;
+    }
 
     // Camera follows car when moving
     if (Math.abs(carSpeed) > 0.01) {
