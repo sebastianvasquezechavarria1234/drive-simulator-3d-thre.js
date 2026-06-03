@@ -77,20 +77,15 @@ scene.add(pointBlue);
 
 // ─── Ground ─────────────────────────────────────────────────────────
 
-// Grid floor
-const gridHelper = new THREE.GridHelper(200, 200, 0x444466, 0x222244);
-gridHelper.position.y = 0.01;
-scene.add(gridHelper);
-
 // Ground texture
 const textureLoader = new THREE.TextureLoader();
 const groundTexture = textureLoader.load('texture/grav.jpg');
 groundTexture.wrapS = THREE.RepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
-groundTexture.repeat.set(40, 40);
+groundTexture.repeat.set(20, 20);
 
 // Ground plane with shadow
-const groundGeo = new THREE.PlaneGeometry(200, 200);
+const groundGeo = new THREE.PlaneGeometry(100, 100);
 const groundMat = new THREE.MeshStandardMaterial({
   map: groundTexture,
   roughness: 0.85,
@@ -282,7 +277,7 @@ function animate() {
     }
 
     // Clamp to ground bounds
-    const limit = 95;
+    const limit = 45;
     car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
     car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
 
@@ -296,12 +291,6 @@ function animate() {
   }
 
   controls.update();
-
-  // Ground follows camera (infinite floor effect)
-  ground.position.x = camera.position.x;
-  ground.position.z = camera.position.z;
-  gridHelper.position.x = camera.position.x;
-  gridHelper.position.z = camera.position.z;
 
   // Subtle floating point lights
   pointRed.position.y = 3 + Math.sin(t * 0.8) * 0.5;
