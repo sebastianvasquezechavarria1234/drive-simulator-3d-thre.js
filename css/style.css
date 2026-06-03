@@ -120,10 +120,10 @@ body {
 .control-btn {
   width: 40px;
   height: 40px;
-  background: #d0d0d0;
-  border: 1px solid #a0a0a0;
+  background: #d0d0d0b3;
+  border: 1px solid #a0a0a03b;
   border-radius: 8px;
-  color: black;
+  color: rgba(0, 0, 0, 0.887);
   font-family: Arial, sans-serif;
   font-size: 14px;
   font-weight: 300;
@@ -134,7 +134,7 @@ body {
   user-select: none;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all  0.2s;
 }
 
 .control-btn:hover {
