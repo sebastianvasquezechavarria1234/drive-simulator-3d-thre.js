@@ -166,33 +166,8 @@ scene.environment = envMap;
 
 // ─── Decorative elements ────────────────────────────────────────────
 
-function addPillar(x, z) {
-  const geo = new THREE.CylinderGeometry(0.15, 0.2, 4, 8);
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0x334466,
-    roughness: 0.3,
-    metalness: 0.7,
-  });
-  const pillar = new THREE.Mesh(geo, mat);
-  pillar.position.set(x, 2, z);
-  pillar.castShadow = true;
-  pillar.receiveShadow = true;
-  scene.add(pillar);
-
-  // Light on top
-  const light = new THREE.PointLight(0xe94560, 0.4, 8);
-  light.position.set(x, 4.2, z);
-  scene.add(light);
-}
-
-const pillarPositions = [
-  [-5, -5], [-5, 5], [5, -5], [5, 5],
-  [-5, 0], [5, 0], [0, -5], [0, 5],
-];
-pillarPositions.forEach(([x, z]) => addPillar(x, z));
-
-// ─── Tree controls (WASD) ────────────────────────────────────────────
-let tree = null;
+// ─── Car controls (WASD) ────────────────────────────────────────────
+let car = null;
 let carSpeed = 0;
 const carMaxSpeed = 0.5;
 const carAccel = 0.008;
@@ -204,12 +179,12 @@ const keys = {};
 window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
 
-// ─── Load Model ─────────────────────────────────────────────────────
+// ─── Load Car Model ─────────────────────────────────────────────────
 const loader = new GLTFLoader();
 const loadingEl = document.getElementById('loading');
 
 loader.load(
-  'model/aetheris_feathertree_variant__alien_flora.glb',
+  'model/model_inspector_demo_press_i.glb',
   (gltf) => {
     const model = gltf.scene;
 
@@ -232,7 +207,7 @@ loader.load(
     });
 
     scene.add(model);
-    tree = model;
+    car = model;
 
     // Center controls on model
     controls.target.set(0, size.y * scale * 0.4, 0);
@@ -263,6 +238,35 @@ loader.load(
   }
 );
 
+// ─── Load Tree (decorative) ────────────────────────────────────────
+const treeLoader = new GLTFLoader();
+treeLoader.load(
+  'model/aetheris_feathertree_variant__alien_flora.glb',
+  (gltf) => {
+    const treeModel = gltf.scene;
+    const treePositions = [
+      [-18, -15], [20, -12], [-14, 18], [22, 16],
+      [-25, 0], [28, -5], [0, -25], [5, 28],
+      [-20, 20], [25, -20], [-30, -10], [15, 30],
+    ];
+    treePositions.forEach(([x, z]) => {
+      const treeClone = treeModel.clone();
+      const box = new THREE.Box3().setFromObject(treeClone);
+      const size = box.getSize(new THREE.Vector3());
+      const scale = 6 / Math.max(size.x, size.y, size.z);
+      treeClone.scale.setScalar(scale);
+      treeClone.position.set(x, -20, z);
+      treeClone.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      scene.add(treeClone);
+    });
+  }
+);
+
 // ─── Resize ─────────────────────────────────────────────────────────
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -278,7 +282,7 @@ function animate() {
   const t = clock.getElapsedTime();
 
   // ── WASD movement with acceleration ──
-  if (tree) {
+  if (car) {
     const isMoving = keys['w'] || keys['s'] || keys['arrowup'] || keys['arrowdown'];
 
     // Accelerate
@@ -301,34 +305,34 @@ function animate() {
     }
 
     // Apply speed
-    tree.position.x += Math.sin(tree.rotation.y) * carSpeed;
-    tree.position.z += Math.cos(tree.rotation.y) * carSpeed;
+    car.position.x += Math.sin(car.rotation.y) * carSpeed;
+    car.position.z += Math.cos(car.rotation.y) * carSpeed;
 
     // Rotation only when moving
     if (Math.abs(carSpeed) > 0.01) {
       if (keys['a'] || keys['arrowleft']) {
-        tree.rotation.y += carRotSpeed * (carSpeed > 0 ? 1 : -1);
+        car.rotation.y += carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
       if (keys['d'] || keys['arrowright']) {
-        tree.rotation.y -= carRotSpeed * (carSpeed > 0 ? 1 : -1);
+        car.rotation.y -= carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
     }
 
     // Clamp to ground bounds (circular)
     const maxRadius = 40;
-    const distXZ = Math.sqrt(tree.position.x ** 2 + tree.position.z ** 2);
+    const distXZ = Math.sqrt(car.position.x ** 2 + car.position.z ** 2);
     if (distXZ > maxRadius) {
-      const angle = Math.atan2(tree.position.z, tree.position.x);
-      tree.position.x = Math.cos(angle) * maxRadius;
-      tree.position.z = Math.sin(angle) * maxRadius;
+      const angle = Math.atan2(car.position.z, car.position.x);
+      car.position.x = Math.cos(angle) * maxRadius;
+      car.position.z = Math.sin(angle) * maxRadius;
     }
 
-    // Camera follows tree when moving
+    // Camera follows car when moving
     if (Math.abs(carSpeed) > 0.01) {
       const offset = new THREE.Vector3(0, 5, 10);
-      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), tree.rotation.y + Math.PI);
-      camera.position.lerp(tree.position.clone().add(offset), 0.08);
-      controls.target.lerp(tree.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y + Math.PI);
+      camera.position.lerp(car.position.clone().add(offset), 0.08);
+      controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
     }
   }
 
