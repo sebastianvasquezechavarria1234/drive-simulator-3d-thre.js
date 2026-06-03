@@ -1,0 +1,235 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+// ─── Renderer ───────────────────────────────────────────────────────
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+// ─── Scene ──────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1a2e);
+scene.fog = new THREE.FogExp2(0x1a1a2e, 0.015);
+
+// ─── Camera ─────────────────────────────────────────────────────────
+const camera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  200
+);
+camera.position.set(8, 6, 12);
+
+// ─── Controls ───────────────────────────────────────────────────────
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.target.set(0, 1, 0);
+controls.minDistance = 3;
+controls.maxDistance = 50;
+controls.maxPolarAngle = Math.PI / 2.05;
+controls.update();
+
+// ─── Lights ─────────────────────────────────────────────────────────
+
+// Ambient
+const ambient = new THREE.AmbientLight(0x404060, 0.6);
+scene.add(ambient);
+
+// Hemisphere
+const hemi = new THREE.HemisphereLight(0x6688cc, 0x223344, 0.8);
+scene.add(hemi);
+
+// Directional (sun)
+const dirLight = new THREE.DirectionalLight(0xffeedd, 2.5);
+dirLight.position.set(10, 15, 8);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(2048, 2048);
+dirLight.shadow.camera.near = 1;
+dirLight.shadow.camera.far = 50;
+dirLight.shadow.camera.left = -20;
+dirLight.shadow.camera.right = 20;
+dirLight.shadow.camera.top = 20;
+dirLight.shadow.camera.bottom = -20;
+dirLight.shadow.bias = -0.0005;
+scene.add(dirLight);
+
+// Fill light
+const fillLight = new THREE.DirectionalLight(0x8899bb, 0.8);
+fillLight.position.set(-8, 5, -6);
+scene.add(fillLight);
+
+// Point lights for atmosphere
+const pointRed = new THREE.PointLight(0xe94560, 1.5, 20);
+pointRed.position.set(-6, 3, 0);
+scene.add(pointRed);
+
+const pointBlue = new THREE.PointLight(0x0f3460, 1.5, 20);
+pointBlue.position.set(6, 3, 0);
+scene.add(pointBlue);
+
+// ─── Ground ─────────────────────────────────────────────────────────
+
+// Grid floor
+const gridHelper = new THREE.GridHelper(60, 60, 0x444466, 0x222244);
+gridHelper.position.y = 0.01;
+scene.add(gridHelper);
+
+// Ground plane with shadow
+const groundGeo = new THREE.PlaneGeometry(60, 60);
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x222233,
+  roughness: 0.85,
+  metalness: 0.1,
+});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// ─── Environment / Skybox ──────────────────────────────────────────
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+pmremGenerator.compileEquirectangularShader();
+
+function createGradientEnvironment() {
+  const size = 256;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const t = y / size;
+      const r = Math.floor(10 + t * 20);
+      const g = Math.floor(10 + t * 15);
+      const b = Math.floor(40 + t * 30);
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+      data[i + 3] = 255;
+    }
+  }
+  const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+const envTexture = createGradientEnvironment();
+const envMap = pmremGenerator.fromEquirectangular(envTexture).texture;
+scene.environment = envMap;
+
+// ─── Decorative elements ────────────────────────────────────────────
+
+function addPillar(x, z) {
+  const geo = new THREE.CylinderGeometry(0.15, 0.2, 4, 8);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x334466,
+    roughness: 0.3,
+    metalness: 0.7,
+  });
+  const pillar = new THREE.Mesh(geo, mat);
+  pillar.position.set(x, 2, z);
+  pillar.castShadow = true;
+  pillar.receiveShadow = true;
+  scene.add(pillar);
+
+  // Light on top
+  const light = new THREE.PointLight(0xe94560, 0.4, 8);
+  light.position.set(x, 4.2, z);
+  scene.add(light);
+}
+
+const pillarPositions = [
+  [-5, -5], [-5, 5], [5, -5], [5, 5],
+  [-5, 0], [5, 0], [0, -5], [0, 5],
+];
+pillarPositions.forEach(([x, z]) => addPillar(x, z));
+
+// ─── Load Model ─────────────────────────────────────────────────────
+const loader = new GLTFLoader();
+const loadingEl = document.getElementById('loading');
+
+loader.load(
+  'model/model_inspector_demo_press_i.glb',
+  (gltf) => {
+    const model = gltf.scene;
+
+    // Center and auto-scale model
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 4 / maxDim;
+
+    model.scale.setScalar(scale);
+    model.position.sub(center.multiplyScalar(scale));
+    model.position.y = -(box.min.y * scale);
+
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+
+    scene.add(model);
+
+    // Center controls on model
+    controls.target.set(0, size.y * scale * 0.4, 0);
+    controls.update();
+
+    // Hide loading
+    loadingEl.classList.add('hidden');
+
+    // Play animations if any
+    if (gltf.animations.length > 0) {
+      const mixer = new THREE.AnimationMixer(model);
+      gltf.animations.forEach((clip) => {
+        mixer.clipAction(clip).play();
+      });
+
+      const clock = new THREE.Clock();
+      function animateAnimation() {
+        requestAnimationFrame(animateAnimation);
+        mixer.update(clock.getDelta());
+      }
+      animateAnimation();
+    }
+  },
+  undefined,
+  (error) => {
+    console.error('Error loading model:', error);
+    loadingEl.innerHTML = '<p style="color:#e94560">Error loading model</p>';
+  }
+);
+
+// ─── Resize ─────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ─── Render loop ────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  controls.update();
+
+  // Subtle floating point lights
+  pointRed.position.y = 3 + Math.sin(t * 0.8) * 0.5;
+  pointBlue.position.y = 3 + Math.cos(t * 0.8) * 0.5;
+
+  renderer.render(scene, camera);
+}
+
+animate();
