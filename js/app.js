@@ -213,19 +213,15 @@ mushroomLoader.load(
   'model/Mushroom_texture.glb',
   (gltf) => {
     const mushroomModel = gltf.scene;
-    const mushroomData = [
-      { pos: [-18, -15], scale: 4 },
-      { pos: [20, -12], scale: 5 },
-      { pos: [-14, 18], scale: 3 },
-      { pos: [22, 16], scale: 6 },
-      { pos: [-25, 0], scale: 4.5 },
+    const mushroomPositions = [
+      [-8, -6], [8, -5], [-6, 8], [7, 7],
     ];
-    mushroomData.forEach(({ pos: [x, z], scale }) => {
+    mushroomPositions.forEach(([x, z]) => {
       const mushroomClone = mushroomModel.clone();
       const box = new THREE.Box3().setFromObject(mushroomClone);
       const size = box.getSize(new THREE.Vector3());
-      const s = scale / Math.max(size.x, size.y, size.z);
-      mushroomClone.scale.setScalar(s);
+      const scale = 6 / Math.max(size.x, size.y, size.z);
+      mushroomClone.scale.setScalar(scale);
       mushroomClone.position.set(x, -1, z);
       mushroomClone.traverse((child) => {
         if (child.isMesh) {
