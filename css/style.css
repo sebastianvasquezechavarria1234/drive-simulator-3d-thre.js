@@ -31,22 +31,22 @@ body {
   animation: fadeInBlur 0.8s ease-out 1s both;
 }
 
-#info h1 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
 #info .instructions {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-style: italic;
   color: #555;
-  animation: pulse 2s ease-in-out infinite;
+  animation: attentionBlur 3s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+@keyframes attentionBlur {
+  0%, 100% { 
+    opacity: 0.5;
+    filter: blur(1px);
+  }
+  50% { 
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 #scene {
