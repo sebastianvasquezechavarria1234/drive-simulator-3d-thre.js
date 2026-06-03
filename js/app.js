@@ -82,10 +82,17 @@ const gridHelper = new THREE.GridHelper(200, 200, 0x444466, 0x222244);
 gridHelper.position.y = 0.01;
 scene.add(gridHelper);
 
+// Ground texture
+const textureLoader = new THREE.TextureLoader();
+const groundTexture = textureLoader.load('texture/grav.jpg');
+groundTexture.wrapS = THREE.RepeatWrapping;
+groundTexture.wrapT = THREE.RepeatWrapping;
+groundTexture.repeat.set(40, 40);
+
 // Ground plane with shadow
 const groundGeo = new THREE.PlaneGeometry(200, 200);
 const groundMat = new THREE.MeshStandardMaterial({
-  color: 0x222233,
+  map: groundTexture,
   roughness: 0.85,
   metalness: 0.1,
 });
