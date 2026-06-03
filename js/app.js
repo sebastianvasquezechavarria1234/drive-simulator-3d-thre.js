@@ -260,7 +260,7 @@ function animate() {
     // Camera follows car only when moving
     if (isMoving) {
       const offset = new THREE.Vector3(0, 5, 10);
-      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y + Math.PI);
       camera.position.lerp(car.position.clone().add(offset), 0.08);
       controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
     }
