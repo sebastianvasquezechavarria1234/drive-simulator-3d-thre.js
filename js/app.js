@@ -296,8 +296,7 @@ mushroomLoader.load(
     const mushroomModel = gltf.scene;
     const mushroomPositions = [
       [-18, -15], [20, -12], [-14, 18], [22, 16],
-      [-25, 0], [28, -5], [0, -25], [5, 28],
-      [-20, 20], [25, -20], [-30, -10], [15, 30],
+      [-25, 0], [28, -5],
     ];
     mushroomPositions.forEach(([x, z]) => {
       const mushroomClone = mushroomModel.clone();
@@ -305,7 +304,7 @@ mushroomLoader.load(
       const size = box.getSize(new THREE.Vector3());
       const scale = 6 / Math.max(size.x, size.y, size.z);
       mushroomClone.scale.setScalar(scale);
-      mushroomClone.position.set(x, -1, z);
+      mushroomClone.position.set(x, 0, z);
       mushroomClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
