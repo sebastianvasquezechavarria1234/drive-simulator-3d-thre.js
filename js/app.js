@@ -15,8 +15,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1a2e);
-scene.fog = new THREE.FogExp2(0x1a1a2e, 0.015);
+scene.background = new THREE.Color(0x0a1a12);
+scene.fog = new THREE.FogExp2(0x0a1a12, 0.015);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
@@ -96,9 +96,9 @@ const groundMat = new THREE.ShaderMaterial({
   uniforms: {
     uTexture: { value: groundTexture },
     uBump: { value: bumpTexture },
-    uFadeStart: { value: 30.0 },
+    uFadeStart: { value: 15.0 },
     uFadeEnd: { value: 50.0 },
-    uEdgeColor: { value: new THREE.Color(0x0a1f0a) },
+    uEdgeColor: { value: new THREE.Color(0x0a1a12) },
   },
   vertexShader: `
     varying vec2 vUv;
