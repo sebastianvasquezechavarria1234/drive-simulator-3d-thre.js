@@ -153,7 +153,11 @@ pillarPositions.forEach(([x, z]) => addPillar(x, z));
 
 // ─── Car controls (WASD) ────────────────────────────────────────────
 let car = null;
-const carSpeed = 0.15;
+let carSpeed = 0;
+const carMaxSpeed = 0.5;
+const carAccel = 0.008;
+const carDecel = 0.015;
+const carBrake = 0.04;
 const carRotSpeed = 0.04;
 const keys = {};
 
@@ -233,24 +237,40 @@ function animate() {
   requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
 
-  // ── WASD movement ──
+  // ── WASD movement with acceleration ──
   if (car) {
     const isMoving = keys['w'] || keys['s'] || keys['arrowup'] || keys['arrowdown'];
 
+    // Accelerate
     if (keys['w'] || keys['arrowup']) {
-      car.position.x += Math.sin(car.rotation.y) * carSpeed;
-      car.position.z += Math.cos(car.rotation.y) * carSpeed;
+      carSpeed = Math.min(carSpeed + carAccel, carMaxSpeed);
     }
-    if (keys['s'] || keys['arrowdown']) {
-      car.position.x -= Math.sin(car.rotation.y) * carSpeed;
-      car.position.z -= Math.cos(car.rotation.y) * carSpeed;
+    // Reverse
+    else if (keys['s'] || keys['arrowdown']) {
+      carSpeed = Math.max(carSpeed - carAccel, -carMaxSpeed * 0.5);
     }
-    if (isMoving) {
+    // Brake (space)
+    else if (keys[' ']) {
+      if (carSpeed > 0) carSpeed = Math.max(carSpeed - carBrake, 0);
+      else if (carSpeed < 0) carSpeed = Math.min(carSpeed + carBrake, 0);
+    }
+    // Natural deceleration (no key pressed)
+    else {
+      if (carSpeed > 0) carSpeed = Math.max(carSpeed - carDecel, 0);
+      else if (carSpeed < 0) carSpeed = Math.min(carSpeed + carDecel, 0);
+    }
+
+    // Apply speed
+    car.position.x += Math.sin(car.rotation.y) * carSpeed;
+    car.position.z += Math.cos(car.rotation.y) * carSpeed;
+
+    // Rotation only when moving
+    if (Math.abs(carSpeed) > 0.01) {
       if (keys['a'] || keys['arrowleft']) {
-        car.rotation.y += carRotSpeed;
+        car.rotation.y += carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
       if (keys['d'] || keys['arrowright']) {
-        car.rotation.y -= carRotSpeed;
+        car.rotation.y -= carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
     }
 
@@ -259,8 +279,8 @@ function animate() {
     car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
     car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
 
-    // Camera follows car only when moving
-    if (isMoving) {
+    // Camera follows car when moving
+    if (Math.abs(carSpeed) > 0.01) {
       const offset = new THREE.Vector3(0, 5, 10);
       offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y + Math.PI);
       camera.position.lerp(car.position.clone().add(offset), 0.08);
