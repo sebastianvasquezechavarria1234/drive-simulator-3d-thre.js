@@ -148,6 +148,22 @@ const keys = {};
 window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
 
+// ─── WASD Button Controls ──────────────────────────────────────────
+function setupButton(key) {
+  const btn = document.getElementById(`btn-${key}`);
+  if (btn) {
+    btn.addEventListener('mousedown', () => { keys[key] = true; });
+    btn.addEventListener('mouseup', () => { keys[key] = false; });
+    btn.addEventListener('mouseleave', () => { keys[key] = false; });
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+  }
+}
+setupButton('w');
+setupButton('a');
+setupButton('s');
+setupButton('d');
+
 // ─── Load Car Model ─────────────────────────────────────────────────
 const loader = new GLTFLoader();
 const loadingEl = document.getElementById('loading');
