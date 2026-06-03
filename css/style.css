@@ -22,10 +22,9 @@ body {
 #info {
   position: absolute;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 20px;
   color: #333;
-  text-align: center;
+  text-align: left;
   pointer-events: none;
   z-index: 10;
   animation: fadeInBlur 0.8s ease-out 1s both;
