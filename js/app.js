@@ -191,8 +191,8 @@ const pillarPositions = [
 ];
 pillarPositions.forEach(([x, z]) => addPillar(x, z));
 
-// ─── Car controls (WASD) ────────────────────────────────────────────
-let car = null;
+// ─── Tree controls (WASD) ────────────────────────────────────────────
+let tree = null;
 let carSpeed = 0;
 const carMaxSpeed = 0.5;
 const carAccel = 0.008;
@@ -209,7 +209,7 @@ const loader = new GLTFLoader();
 const loadingEl = document.getElementById('loading');
 
 loader.load(
-  'model/model_inspector_demo_press_i.glb',
+  'model/aetheris_feathertree_variant__alien_flora.glb',
   (gltf) => {
     const model = gltf.scene;
 
@@ -232,7 +232,7 @@ loader.load(
     });
 
     scene.add(model);
-    car = model;
+    tree = model;
 
     // Center controls on model
     controls.target.set(0, size.y * scale * 0.4, 0);
@@ -278,7 +278,7 @@ function animate() {
   const t = clock.getElapsedTime();
 
   // ── WASD movement with acceleration ──
-  if (car) {
+  if (tree) {
     const isMoving = keys['w'] || keys['s'] || keys['arrowup'] || keys['arrowdown'];
 
     // Accelerate
@@ -301,34 +301,34 @@ function animate() {
     }
 
     // Apply speed
-    car.position.x += Math.sin(car.rotation.y) * carSpeed;
-    car.position.z += Math.cos(car.rotation.y) * carSpeed;
+    tree.position.x += Math.sin(tree.rotation.y) * carSpeed;
+    tree.position.z += Math.cos(tree.rotation.y) * carSpeed;
 
     // Rotation only when moving
     if (Math.abs(carSpeed) > 0.01) {
       if (keys['a'] || keys['arrowleft']) {
-        car.rotation.y += carRotSpeed * (carSpeed > 0 ? 1 : -1);
+        tree.rotation.y += carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
       if (keys['d'] || keys['arrowright']) {
-        car.rotation.y -= carRotSpeed * (carSpeed > 0 ? 1 : -1);
+        tree.rotation.y -= carRotSpeed * (carSpeed > 0 ? 1 : -1);
       }
     }
 
     // Clamp to ground bounds (circular)
     const maxRadius = 40;
-    const distXZ = Math.sqrt(car.position.x ** 2 + car.position.z ** 2);
+    const distXZ = Math.sqrt(tree.position.x ** 2 + tree.position.z ** 2);
     if (distXZ > maxRadius) {
-      const angle = Math.atan2(car.position.z, car.position.x);
-      car.position.x = Math.cos(angle) * maxRadius;
-      car.position.z = Math.sin(angle) * maxRadius;
+      const angle = Math.atan2(tree.position.z, tree.position.x);
+      tree.position.x = Math.cos(angle) * maxRadius;
+      tree.position.z = Math.sin(angle) * maxRadius;
     }
 
-    // Camera follows car when moving
+    // Camera follows tree when moving
     if (Math.abs(carSpeed) > 0.01) {
       const offset = new THREE.Vector3(0, 5, 10);
-      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y + Math.PI);
-      camera.position.lerp(car.position.clone().add(offset), 0.08);
-      controls.target.lerp(car.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), tree.rotation.y + Math.PI);
+      camera.position.lerp(tree.position.clone().add(offset), 0.08);
+      controls.target.lerp(tree.position.clone().add(new THREE.Vector3(0, 1, 0)), 0.08);
     }
   }
 
