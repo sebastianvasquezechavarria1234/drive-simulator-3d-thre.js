@@ -9,7 +9,7 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 1.2;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -40,54 +40,45 @@ controls.update();
 // ─── Lights ─────────────────────────────────────────────────────────
 
 // Ambient
-const ambient = new THREE.AmbientLight(0x404060, 1.2);
+const ambient = new THREE.AmbientLight(0x8090b0, 0.6);
 scene.add(ambient);
 
 // Hemisphere
-const hemi = new THREE.HemisphereLight(0x6688cc, 0x223344, 1.5);
+const hemi = new THREE.HemisphereLight(0x8899bb, 0x443322, 0.8);
 scene.add(hemi);
 
 // Directional (sun)
-const dirLight = new THREE.DirectionalLight(0xffeedd, 3.5);
-dirLight.position.set(10, 15, 8);
+const dirLight = new THREE.DirectionalLight(0xffeedd, 4.0);
+dirLight.position.set(15, 20, 10);
 dirLight.castShadow = true;
-dirLight.shadow.mapSize.set(1024, 1024);
+dirLight.shadow.mapSize.set(2048, 2048);
 dirLight.shadow.camera.near = 1;
-dirLight.shadow.camera.far = 50;
-dirLight.shadow.camera.left = -20;
-dirLight.shadow.camera.right = 20;
-dirLight.shadow.camera.top = 20;
-dirLight.shadow.camera.bottom = -20;
+dirLight.shadow.camera.far = 60;
+dirLight.shadow.camera.left = -25;
+dirLight.shadow.camera.right = 25;
+dirLight.shadow.camera.top = 25;
+dirLight.shadow.camera.bottom = -25;
 dirLight.shadow.bias = -0.0005;
 scene.add(dirLight);
 
 // Fill light
-const fillLight = new THREE.DirectionalLight(0x8899bb, 1.5);
+const fillLight = new THREE.DirectionalLight(0x8899bb, 0.8);
 fillLight.position.set(-8, 5, -6);
 scene.add(fillLight);
 
-// Back light
-const backLight = new THREE.DirectionalLight(0xffeedd, 2.0);
+// Back / Rim light
+const backLight = new THREE.DirectionalLight(0xaabbdd, 2.5);
 backLight.position.set(-10, 10, -8);
 scene.add(backLight);
 
 // Point lights for atmosphere
-const pointRed = new THREE.PointLight(0xe94560, 2.5, 30);
+const pointRed = new THREE.PointLight(0xe94560, 1.5, 30);
 pointRed.position.set(-6, 4, 0);
 scene.add(pointRed);
 
-const pointBlue = new THREE.PointLight(0x0f3460, 2.5, 30);
+const pointBlue = new THREE.PointLight(0x0f3460, 1.5, 30);
 pointBlue.position.set(6, 4, 0);
 scene.add(pointBlue);
-
-// Extra point lights
-const pointGreen = new THREE.PointLight(0x00ff88, 1.5, 25);
-pointGreen.position.set(0, 5, -10);
-scene.add(pointGreen);
-
-const pointPurple = new THREE.PointLight(0x9400D3, 1.5, 25);
-pointPurple.position.set(0, 5, 10);
-scene.add(pointPurple);
 
 // ─── Ground ─────────────────────────────────────────────────────────
 
@@ -233,6 +224,7 @@ mushroomLoader.load(
     const mushroomModel = gltf.scene;
     const mushroomPositions = [
       [-8, -6], [8, -5], [-2, 3],
+      [-12, 2], [10, 8], [-5, -10],
     ];
     mushroomPositions.forEach(([x, z]) => {
       const mushroomClone = mushroomModel.clone();
