@@ -169,7 +169,7 @@ const loader = new GLTFLoader();
 const loadingEl = document.getElementById('loading');
 
 loader.load(
-  'model/model_inspector_demo_press_i.glb',
+  'model/card.glb',
   (gltf) => {
     const model = gltf.scene;
 
@@ -178,7 +178,7 @@ loader.load(
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 4 / maxDim;
+    const scale = 2 / maxDim;
 
     model.scale.setScalar(scale);
     model.position.sub(center.multiplyScalar(scale));
@@ -226,7 +226,7 @@ loader.load(
 // ─── Load Mushroom (decorative) ────────────────────────────────────
 const mushroomLoader = new GLTFLoader();
 mushroomLoader.load(
-  'model/Mushroom_texture.glb',
+  'model/pine.glb',
   (gltf) => {
     const mushroomModel = gltf.scene;
     const mushroomPositions = [
@@ -236,7 +236,7 @@ mushroomLoader.load(
       const mushroomClone = mushroomModel.clone();
       const box = new THREE.Box3().setFromObject(mushroomClone);
       const size = box.getSize(new THREE.Vector3());
-      const scale = 6 / Math.max(size.x, size.y, size.z);
+      const scale = 12 / Math.max(size.x, size.y, size.z);
       mushroomClone.scale.setScalar(scale);
       mushroomClone.position.set(x, -1, z);
       mushroomClone.traverse((child) => {
