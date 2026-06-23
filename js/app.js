@@ -38,8 +38,56 @@ controls.maxPolarAngle = Math.PI / 2.05;
 controls.update();
 
 // ─── Lights ─────────────────────────────────────────────────────────
-const ambient = new THREE.AmbientLight(0xffffff, 1);
+
+// Ambient
+const ambient = new THREE.AmbientLight(0x404060, 1.2);
 scene.add(ambient);
+
+// Hemisphere
+const hemi = new THREE.HemisphereLight(0x6688cc, 0x223344, 1.5);
+scene.add(hemi);
+
+// Directional (sun)
+const dirLight = new THREE.DirectionalLight(0xffeedd, 3.5);
+dirLight.position.set(10, 15, 8);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(1024, 1024);
+dirLight.shadow.camera.near = 1;
+dirLight.shadow.camera.far = 50;
+dirLight.shadow.camera.left = -20;
+dirLight.shadow.camera.right = 20;
+dirLight.shadow.camera.top = 20;
+dirLight.shadow.camera.bottom = -20;
+dirLight.shadow.bias = -0.0005;
+scene.add(dirLight);
+
+// Fill light
+const fillLight = new THREE.DirectionalLight(0x8899bb, 1.5);
+fillLight.position.set(-8, 5, -6);
+scene.add(fillLight);
+
+// Back light
+const backLight = new THREE.DirectionalLight(0xffeedd, 2.0);
+backLight.position.set(-10, 10, -8);
+scene.add(backLight);
+
+// Point lights for atmosphere
+const pointRed = new THREE.PointLight(0xe94560, 2.5, 30);
+pointRed.position.set(-6, 4, 0);
+scene.add(pointRed);
+
+const pointBlue = new THREE.PointLight(0x0f3460, 2.5, 30);
+pointBlue.position.set(6, 4, 0);
+scene.add(pointBlue);
+
+// Extra point lights
+const pointGreen = new THREE.PointLight(0x00ff88, 1.5, 25);
+pointGreen.position.set(0, 5, -10);
+scene.add(pointGreen);
+
+const pointPurple = new THREE.PointLight(0x9400D3, 1.5, 25);
+pointPurple.position.set(0, 5, 10);
+scene.add(pointPurple);
 
 // ─── Ground ─────────────────────────────────────────────────────────
 
@@ -278,6 +326,10 @@ function animate() {
   }
 
   controls.update();
+
+  // Subtle floating point lights
+  pointRed.position.y = 3 + Math.sin(t * 0.8) * 0.5;
+  pointBlue.position.y = 3 + Math.cos(t * 0.8) * 0.5;
 
   renderer.render(scene, camera);
 }
