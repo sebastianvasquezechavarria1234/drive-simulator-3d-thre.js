@@ -183,6 +183,7 @@ loader.load(
     model.scale.setScalar(scale);
     model.position.sub(center.multiplyScalar(scale));
     model.position.y = -(box.min.y * scale);
+    model.rotation.y = Math.PI;
 
     model.traverse((child) => {
       if (child.isMesh) {
@@ -238,7 +239,7 @@ mushroomLoader.load(
       const size = box.getSize(new THREE.Vector3());
       const scale = 12 / Math.max(size.x, size.y, size.z);
       mushroomClone.scale.setScalar(scale);
-      mushroomClone.position.set(x, -1, z);
+      mushroomClone.position.set(x, 0, z);
       mushroomClone.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
