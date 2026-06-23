@@ -2,7 +2,7 @@
 
 # Drive Simulator 3D
 
-![Preview](img/preview.jpg)
+![Preview](img/preview.jpg?v=2)
 
 **An interactive 3D driving simulator built with Three.js**
 
