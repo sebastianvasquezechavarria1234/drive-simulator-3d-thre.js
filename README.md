@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚗 Drive Simulator 3D
+# Drive Simulator 3D
 
 ![Preview](img/preview.jpg)
 
