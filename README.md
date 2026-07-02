@@ -10,6 +10,10 @@
   <img src="https://img.shields.io/badge/zero-dependencies-npm-free-brightgreen?style=flat-square" alt="Dependencies">
 </p>
 
+<p align="center">
+  <img src="img/Preview.jpg" alt="Drive Simulator 3D Preview">
+</p>
+
 ---
 
 There is something quietly powerful about opening a browser tab and finding yourself behind the wheel of a 3D car — no downloads, no installs, no friction. Just a URL, a canvas, and the road ahead.
