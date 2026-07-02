@@ -14,7 +14,21 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xe67e22);
+
+const bgCanvas = document.createElement('canvas');
+bgCanvas.width = 2;
+bgCanvas.height = 512;
+const bgCtx = bgCanvas.getContext('2d');
+const bgGradient = bgCtx.createLinearGradient(0, 0, 0, 512);
+bgGradient.addColorStop(0, '#1a5276');
+bgGradient.addColorStop(0.5, '#e67e22');
+bgGradient.addColorStop(1, '#f39c12');
+bgCtx.fillStyle = bgGradient;
+bgCtx.fillRect(0, 0, 2, 512);
+
+const bgTexture = new THREE.CanvasTexture(bgCanvas);
+bgTexture.mapping = THREE.EquirectangularReflectionMapping;
+scene.background = bgTexture;
 scene.fog = new THREE.FogExp2(0xe67e22, 0.008);
 
 // ─── Camera ─────────────────────────────────────────────────────────
@@ -130,7 +144,7 @@ loader.load(
     const carGroup = new THREE.Group();
     model.rotation.y = -Math.PI / 2;
     carGroup.add(model);
-    carGroup.position.x = -1;
+    carGroup.position.x = 0;
     scene.add(carGroup);
 
     // Point camera at car center
