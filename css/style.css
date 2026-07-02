@@ -128,7 +128,7 @@ body {
 .creator-link,
 .github-link {
   color: black;
-  font-family: Arial, sans-serif;
+  font-family: "Lavishly Yours", cursive;
   font-size: 14px;
   font-style: italic;
   text-decoration: underline;
@@ -166,7 +166,7 @@ body {
   border: 1px solid #a0a0a03b;
   border-radius: 8px;
   color: rgba(0, 0, 0, 0.887);
-  font-family: Arial, sans-serif;
+  font-family: "Lavishly Yours", cursive;
   font-size: 14px;
   font-weight: 300;
   font-style: italic;
@@ -199,7 +199,7 @@ body {
 
 .nav-link {
   color: #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Lavishly Yours", cursive;
   font-size: 14px;
   text-decoration: none;
   padding: 8px 16px;
