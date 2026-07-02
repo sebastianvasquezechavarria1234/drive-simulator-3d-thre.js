@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="img/Preview.jpg" alt="Drive Simulator 3D Preview">
+  <img src="img/preview.jpg" alt="Drive Simulator 3D Preview">
 </p>
 
 ---
