@@ -70,28 +70,10 @@ const backLight = new THREE.DirectionalLight(0xaabbdd, 2.5);
 backLight.position.set(-10, 10, -8);
 scene.add(backLight);
 
-// ─── Green Ground Plane (radial gradient) ───────────────────────────
-const gradientCanvas = document.createElement('canvas');
-gradientCanvas.width = 1024;
-gradientCanvas.height = 1024;
-const ctx = gradientCanvas.getContext('2d');
-
-const gradient = ctx.createRadialGradient(512, 512, 0, 512, 512, 512);
-gradient.addColorStop(0, '#5ec05e');
-gradient.addColorStop(0.15, '#4caf4c');
-gradient.addColorStop(0.4, '#3d9e3d');
-gradient.addColorStop(1, '#2d7a2d');
-
-ctx.fillStyle = gradient;
-ctx.fillRect(0, 0, 1024, 1024);
-
-const groundTexture = new THREE.CanvasTexture(gradientCanvas);
-groundTexture.wrapS = THREE.ClampToEdgeWrapping;
-groundTexture.wrapT = THREE.ClampToEdgeWrapping;
-
+// ─── Green Ground Plane ─────────────────────────────────────────────
 const groundGeo = new THREE.CircleGeometry(30, 128);
 const groundMat = new THREE.MeshStandardMaterial({
-  map: groundTexture,
+  color: 0x4a9e4a,
   roughness: 0.9,
   metalness: 0.0,
 });
