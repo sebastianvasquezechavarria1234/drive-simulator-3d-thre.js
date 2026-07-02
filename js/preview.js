@@ -14,8 +14,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xd0e8d0);
-scene.fog = new THREE.FogExp2(0xd0e8d0, 0.012);
+scene.background = new THREE.Color(0xc8e8c8);
+scene.fog = new THREE.FogExp2(0xc8e8c8, 0.008);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
@@ -70,10 +70,28 @@ const backLight = new THREE.DirectionalLight(0xaabbdd, 2.5);
 backLight.position.set(-10, 10, -8);
 scene.add(backLight);
 
-// ─── Green Ground Plane ─────────────────────────────────────────────
-const groundGeo = new THREE.CircleGeometry(15, 128);
+// ─── Green Ground Plane (radial gradient) ───────────────────────────
+const gradientCanvas = document.createElement('canvas');
+gradientCanvas.width = 1024;
+gradientCanvas.height = 1024;
+const ctx = gradientCanvas.getContext('2d');
+
+const gradient = ctx.createRadialGradient(512, 512, 0, 512, 512, 512);
+gradient.addColorStop(0, '#5ec05e');
+gradient.addColorStop(0.15, '#4caf4c');
+gradient.addColorStop(0.4, '#3d9e3d');
+gradient.addColorStop(1, '#2d7a2d');
+
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 1024, 1024);
+
+const groundTexture = new THREE.CanvasTexture(gradientCanvas);
+groundTexture.wrapS = THREE.ClampToEdgeWrapping;
+groundTexture.wrapT = THREE.ClampToEdgeWrapping;
+
+const groundGeo = new THREE.CircleGeometry(30, 128);
 const groundMat = new THREE.MeshStandardMaterial({
-  color: 0x4a9e4a,
+  map: groundTexture,
   roughness: 0.9,
   metalness: 0.0,
 });
@@ -95,7 +113,7 @@ function createGradientEnvironment() {
       const i = (y * size + x) * 4;
       const t = y / size;
       const r = Math.floor(15 + t * 25);
-      const g = Math.floor(30 + t * 30);
+      const g = Math.floor(35 + t * 35);
       const b = Math.floor(15 + t * 20);
       data[i] = r;
       data[i + 1] = g;
