@@ -14,22 +14,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-
-const bgCanvas = document.createElement('canvas');
-bgCanvas.width = 2;
-bgCanvas.height = 512;
-const bgCtx = bgCanvas.getContext('2d');
-const bgGradient = bgCtx.createLinearGradient(0, 0, 0, 512);
-bgGradient.addColorStop(0, '#1a5276');
-bgGradient.addColorStop(0.5, '#e67e22');
-bgGradient.addColorStop(1, '#f39c12');
-bgCtx.fillStyle = bgGradient;
-bgCtx.fillRect(0, 0, 2, 512);
-
-const bgTexture = new THREE.CanvasTexture(bgCanvas);
-bgTexture.mapping = THREE.EquirectangularReflectionMapping;
-scene.background = bgTexture;
-scene.fog = new THREE.FogExp2(0xe67e22, 0.008);
+scene.background = new THREE.Color(0xf48fb1);
+scene.fog = new THREE.FogExp2(0xf48fb1, 0.008);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
