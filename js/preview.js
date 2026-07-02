@@ -14,8 +14,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // ─── Scene ──────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xc8e8c8);
-scene.fog = new THREE.FogExp2(0xc8e8c8, 0.008);
+scene.background = new THREE.Color(0xe67e22);
+scene.fog = new THREE.FogExp2(0xe67e22, 0.008);
 
 // ─── Camera ─────────────────────────────────────────────────────────
 const camera = new THREE.PerspectiveCamera(
@@ -69,19 +69,6 @@ scene.add(fillLight);
 const backLight = new THREE.DirectionalLight(0xaabbdd, 2.5);
 backLight.position.set(-10, 10, -8);
 scene.add(backLight);
-
-// ─── Green Ground Plane ─────────────────────────────────────────────
-const groundGeo = new THREE.CircleGeometry(30, 128);
-const groundMat = new THREE.MeshStandardMaterial({
-  color: 0x4a9e4a,
-  roughness: 0.9,
-  metalness: 0.0,
-});
-const ground = new THREE.Mesh(groundGeo, groundMat);
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = -0.01;
-ground.receiveShadow = true;
-scene.add(ground);
 
 // ─── Environment / Skybox ──────────────────────────────────────────
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -143,6 +130,7 @@ loader.load(
     const carGroup = new THREE.Group();
     model.rotation.y = -Math.PI / 2;
     carGroup.add(model);
+    carGroup.position.x = -1;
     scene.add(carGroup);
 
     // Point camera at car center
